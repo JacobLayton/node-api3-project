@@ -5,6 +5,8 @@ const postRouter = require("./posts/postRouter");
 
 const server = express();
 
+server.use(logger);
+
 
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
@@ -15,6 +17,17 @@ server.use("/api/posts", postRouter);
 
 //custom middleware
 
-function logger(req, res, next) { }
+// This logger will 
+function logger(req, res, next) {
+  const host = req.get('host');
+  // host is good for local env, but if using cross-origin requests do the following:
+  // var origin = req.get('origin');
+  // and change ${host} to ${origin} on line 27
+  console.log(
+    `[${new Date().toISOString()}] ${req.method} to ${req.url} from ${host}`
+  );
+
+  next(); // next just points to the next middleware in the queue
+}
 
 module.exports = server;
