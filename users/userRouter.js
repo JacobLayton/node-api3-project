@@ -1,9 +1,21 @@
 const express = require('express');
 
+const userDb = require("./userDb");
+
 const router = express.Router();
 
+router.use(express.json());
+
 router.post('/', (req, res) => {
-  // do your magic!
+  const userInfo = req.body;
+
+  userDb.insert(userInfo)
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 });
 
 router.post('/:id/posts', (req, res) => {
@@ -11,23 +23,77 @@ router.post('/:id/posts', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  // do your magic!
+  userDb.get()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 });
 
 router.get('/:id', (req, res) => {
-  // do your magic!
+  const { id } = req.params;
+
+  userDb.getById(id)
+    .then(found => {
+      if (found) {
+        res.status(200).json(found);
+      } else {
+        res.status(404).json({ message: "No users with that id" })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(error);
+    })
 });
 
 router.get('/:id/posts', (req, res) => {
-  // do your magic!
+  const id = req.params.id;
+
+  if (!id) {
+    res.status(404).json({ message: "No users with that id" })
+  }
+  userDb.getUserPosts(id)
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 });
 
 router.delete('/:id', (req, res) => {
-  // do your magic!
+  const { id } = req.params;
+
+  userDb.remove(id)
+    .then(deleted => {
+      if (deleted) {
+        res.status(200).json({ message: "User has been deleted" });
+      } else {
+        res.status(404).json({ message: "That user does not exist" })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 });
 
 router.put('/:id', (req, res) => {
-  // do your magic!
+  const { id } = req.params;
+  const userInfo = req.body;
+
+  userDb.update(id, userInfo)
+    .then(updated => {
+      if (updated) {
+        res.status(200).json(updated);
+      } else {
+        res.status(404).json({ message: "That user does not exist" })
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 });
 
 //custom middleware
