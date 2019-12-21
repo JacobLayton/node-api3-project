@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.post("/", (req, res) => {
+router.post("/", validateUser, (req, res) => {
   const userInfo = req.body;
 
   userDb
@@ -122,7 +122,15 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  // do your magic!
+  const newUser = req.body;
+
+  if (!newUser) {
+    res.status(400).json({ message: "missing user data" });
+  } else if (!newUser.name) {
+    res.status(400).json({ message: "missing required name field" });
+  } else {
+    next();
+  }
 }
 
 function validatePost(req, res, next) {
