@@ -1,14 +1,15 @@
-const express = require('express');
+const express = require("express");
+const cors = require("cors");
 
 const userRouter = require("./users/userRouter");
 const postRouter = require("./posts/postRouter");
 
 const server = express();
 
+server.use(cors());
 server.use(logger);
 
-
-server.get('/', (req, res) => {
+server.get("/", (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
 });
 
@@ -17,9 +18,9 @@ server.use("/api/posts", postRouter);
 
 //custom middleware
 
-// This logger will 
+// This logger will
 function logger(req, res, next) {
-  const host = req.get('host');
+  const host = req.get("host");
   // host is good for local env, but if using cross-origin requests do the following:
   // var origin = req.get('origin');
   // and change ${host} to ${origin} on line 27
